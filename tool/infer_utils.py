@@ -5,6 +5,7 @@ from PIL import Image
 import shutil
 import scipy.misc
 import math
+import cv2
 
 
 
@@ -573,7 +574,8 @@ def draw_single_heatmap(norm_cam, gt_label, orig_img, save_path, img_name):
     for i, gt in enumerate(gt_cat):
         hm, heatmap = draw_heatmap_array(orig_img, norm_cam[gt])
         cam_viz_path = os.path.join(save_path,'heatmap/cls_20', img_name + '_{}.png'.format(gt))
-        scipy.misc.imsave(cam_viz_path, heatmap)
+        # scipy.misc.imsave(cam_viz_path, heatmap)
+        cv2.imwrite(cam_viz_path, cv2.cvtColor(heatmap, cv2.COLOR_RGB2BGR))
 
         norm_cam_gt = norm_cam[gt]
         norm_cam_gt[norm_cam_gt<=0.15]=0

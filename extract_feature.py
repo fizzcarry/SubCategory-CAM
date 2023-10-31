@@ -33,20 +33,25 @@ def make_folder(save_folder_path):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--weights", required=True, default="./weights/res38_cls.pth", type=str, help="the weight of the model")
+    # parser.add_argument("--weights", required=True, default="./weights/res38_cls.pth", type=str, help="the weight of the model")
+    parser.add_argument("--weights", default=r"E:\all_data\model\res38_cls.pth", type=str, help="the weight of the model")#**************
     parser.add_argument("--network", default="network.resnet38_cls", type=str, help="the network of the classifier")
-    parser.add_argument("--infer_list", default="voc12/val.txt", type=str, help="the filename list for feature extraction")
+    parser.add_argument("--infer_list", default="voc12/train_aug.txt", type=str, help="the filename list for feature extraction")
     parser.add_argument("--num_workers", default=8, type=int)
-    parser.add_argument("--voc12_root", default="/home/julia/datasets/VOC2012", type=str, help="the path to the dataset folder")
-    parser.add_argument("--from_round_nb", required=True, default=None, type=int, help="the round number of the extracter, e.g., 1st round: from_round_nb=0, 2nd round: from_round_nb=1, and so on")
+    # parser.add_argument("--voc12_root", default="/home/julia/datasets/VOC2012", type=str, help="the path to the dataset folder")
+    parser.add_argument("--voc12_root", default=r"E:\all_data\data\The_PASCAL_VOC_2012\VOCtrainval_11-May-2012\VOCdevkit\VOC2012", type=str, help="the path to the dataset folder")#**************
+    # parser.add_argument("--from_round_nb", required=True, default=None, type=int, help="the round number of the extracter, e.g., 1st round: from_round_nb=0, 2nd round: from_round_nb=1, and so on")
+    parser.add_argument("--from_round_nb", default=0, type=int, help="the round number of the extracter, e.g., 1st round: from_round_nb=0, 2nd round: from_round_nb=1, and so on")#**************
     parser.add_argument("--k_cluster", default=10, type=int, help="the number of the sub-category")
-    parser.add_argument("--save_folder", required=True, default='./save', type=str, help="the path to save the extracted feature")
+    # parser.add_argument("--save_folder", required=True, default='./save', type=str, help="the path to save the extracted feature")
+    parser.add_argument("--save_folder",  default=r'E:\all_data\project\SubCategory_CAM\save', type=str, help="the path to save the extracted feature")#**************
 
     args = parser.parse_args()
 
     make_folder(args.save_folder)
 
     model = getattr(importlib.import_module(args.network), 'Net')(args.k_cluster, args.from_round_nb)
+    print(args.weights)
     model.load_state_dict(torch.load(args.weights))
 
     model.eval()
@@ -71,6 +76,7 @@ if __name__ == '__main__':
     print('################################ Exteacting features from Round-{} ...... ################################'.format(args.from_round_nb))
 
     for iter, (img_name, img_list, label) in enumerate(infer_data_loader):
+        print(iter)
         img_name = img_name[0]
 
         filename_list.append(img_name)

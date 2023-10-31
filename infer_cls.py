@@ -17,7 +17,25 @@ import cv2
 from tool import infer_utils
 
 
+def plot_RGB_image(array):
+    import torch
+    import matplotlib.pyplot as plt
+    import numpy as np
 
+    # 假设您有一个三通道的张量
+
+    # 将张量转换为NumPy数组，并调整通道顺序
+    # 从 (3, 256, 256) 转换为 (256, 256, 3)
+    if len(array.shape)==3:
+        array = np.transpose(array, (1, 2, 0))
+
+    # 将像素值从 [0, 1] 范围映射到 [0, 255] 范围
+    # image_np = (image_np * 255).astype(np.uint8)
+
+    # 使用matplotlib显示图像
+    plt.imshow(array)
+    plt.axis('off')
+    plt.show()
 
 cam_20_list = []
 cam_200_list = []
@@ -28,19 +46,19 @@ gt_list = []
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--weights", required=True, type=str, help="the path to the testing model")
+    parser.add_argument("--weights", default=r"E:\all_data\model\sccam_final.pth", type=str, help="the path to the testing model")#**************
     parser.add_argument("--network", default="network.resnet38_cls", type=str)
-    parser.add_argument("--infer_list", default="voc12/train.txt", type=str)
+    parser.add_argument("--infer_list", default="voc12/val.txt", type=str)#**************val
     parser.add_argument("--num_workers", default=8, type=int)
-    parser.add_argument("--voc12_root", required=True, type=str, help="the path to the dataset folder")
+    parser.add_argument("--voc12_root", default=r"E:\all_data\data\The_PASCAL_VOC_2012\VOCtrainval_11-May-2012\VOCdevkit\VOC2012", type=str, help="the path to the dataset folder")#**************
     parser.add_argument("--save_crf", default=0, type=int, help="the flag to apply crf")
     parser.add_argument("--low_alpha", default=4, type=int, help="crf parameter")
     parser.add_argument("--high_alpha", default=32, type=int, help="crf parameter")
-    parser.add_argument("--save_out_cam", default=0, type=int, help="the flag to save the CAM array")
+    parser.add_argument("--save_out_cam", default=1, type=int, help="the flag to save the CAM array")
     parser.add_argument("--th", default=0.15, type=float, help="the threshold for the response map")
-    parser.add_argument("--save_path", required=True, default=None, type=str, help="the path to save the CAM")
-    parser.add_argument("--k_cluster", required=True, default=10, type=int, help="the number of the sub-category")
-    parser.add_argument("--round_nb", default=1, type=int, help="the round number of the testing model")
+    parser.add_argument("--save_path",default=r'E:\all_data\project\SubCategory_CAM\save' ,type=str, help="the path to save the CAM")#**************
+    parser.add_argument("--k_cluster", default=10, type=int, help="the number of the sub-category")#**************
+    parser.add_argument("--round_nb", default=3, type=int, help="the round number of the testing model")#**************3
 
     args = parser.parse_args()
 
@@ -129,10 +147,25 @@ if __name__ == '__main__':
 
 
         # read groundtruth map
-        gt_folder_path = os.path.join(args.voc12_root, 'SegmentationClassAug')
+        gt_folder_path = os.path.join(args.voc12_root, 'SegmentationClass')
         gt_map_path = os.path.join(gt_folder_path, img_name + '.png')
         gt_map = cv2.imread(gt_map_path, cv2.IMREAD_GRAYSCALE)
         gt_list.append(gt_map)
+
+        #显示原始图片、cam20，cam200，真实
+        plot_RGB_image(img_list[0][0].numpy())
+
+        # plot_RGB_image(list(cam_dict.values())[0])
+        plot_RGB_image(seg_map)
+
+        # plot_RGB_image(list(cam_dict_200_merge.values())[0])
+        plot_RGB_image(seg_map_200)
+
+        plot_RGB_image(gt_map)
+
+
+
+
 
 
         if args.save_out_cam == 1:
@@ -159,7 +192,10 @@ if __name__ == '__main__':
             # np.save(os.path.join(args.save_path, 'crf/out_la_crf', img_name + '.npy'), crf_la)
             crf_ha = _crf_with_alpha(cam_dict, args.high_alpha)
             # np.save(os.path.join(args.save_path, 'crf/out_ha_crf', img_name + '.npy'), crf_ha)
-
+        score = iouutils.scores(gt_list, cam_20_list, n_class=21)
+        print("score-20",score)
+        score_200 = iouutils.scores(gt_list, cam_200_list, n_class=21)
+        print("score-200", score_200)
         print("k={} Round-{}| NOW ITER: {}".format(args.k_cluster, args.round_nb, iter))
 
 

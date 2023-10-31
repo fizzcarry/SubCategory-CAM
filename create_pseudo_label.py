@@ -138,9 +138,9 @@ def create_train_data(merge_filename_list, new_label_list, keep_idx_list):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--k_cluster", required=True, type=int, help="the number of the sub-category")
-    parser.add_argument("--for_round_nb", required=True, type=int, help="the round number that the generated pseudo lable will be used, e.g., 1st round: for_round_nb=1, 2nd round: for_round_nb=2, and so on")
-    parser.add_argument("--save_folder", required=True, default='./save', type=str, help="the path to save the sub-category label")
+    parser.add_argument("--k_cluster", default=10, type=int, help="the number of the sub-category")
+    parser.add_argument("--for_round_nb", default=1, type=int, help="the round number that the generated pseudo lable will be used, e.g., 1st round: for_round_nb=1, 2nd round: for_round_nb=2, and so on")
+    parser.add_argument("--save_folder",  default=r'E:\all_data\project\SubCategory_CAM\save', type=str, help="the path to save the sub-category label")
 
     args = parser.parse_args()
 

@@ -113,15 +113,15 @@ if __name__ == '__main__':
     parser.add_argument("--lr", default=0.01, type=float)
     parser.add_argument("--num_workers", default=8, type=int)
     parser.add_argument("--wt_dec", default=5e-4, type=float)
-    parser.add_argument("--weights", required=True, type=str, help="the path to the pretrained weight ")
+    parser.add_argument("--weights", default=r"E:\all_data\model\ilsvrc-cls_rna-a1_cls1000_ep-0001.params", type=str, help="the path to the pretrained weight ")#**************
     parser.add_argument("--train_list", default="voc12/train_aug.txt", type=str)
     parser.add_argument("--session_name", default="resnet_cls", type=str)
     parser.add_argument("--crop_size", default=224, type=int)
-    parser.add_argument("--voc12_root", default="/home/julia/datasets/VOC2012", type=str, help="the path to the dataset folder")
+    parser.add_argument("--voc12_root", default=r"E:\all_data\data\The_PASCAL_VOC_2012\VOCtrainval_11-May-2012\VOCdevkit\VOC2012", type=str, help="the path to the dataset folder")#**************
     parser.add_argument("--subcls_loss_weight", default="5", type=float, help="the weight multiply to the sub-category loss")
-    parser.add_argument("--round_nb", default="0", type=int, help="the round number of the training classifier, e.g., 1st round: round_nb=1, and so on")
-    parser.add_argument("--k_cluster", default="10", type=int, help="the number of the sub-category")
-    parser.add_argument("--save_folder", required=True, default="./save", type=str, help="the path to save the model")
+    parser.add_argument("--round_nb", default=1, type=int, help="the round number of the training classifier, e.g., 1st round: round_nb=1, and so on")#**************
+    parser.add_argument("--k_cluster", default=10, type=int, help="the number of the sub-category")
+    parser.add_argument("--save_folder", default=r'E:\all_data\project\SubCategory_CAM\save', type=str, help="the path to save the model")#**************
 
     args = parser.parse_args()
 
